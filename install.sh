@@ -29,17 +29,17 @@ function src_install() {
 
   # Compile and install the asterisk:
   sudo ./configure
-  # make menuselect
-  sudo menuselect/menuselect --enable format_mp3  --enable app_macro \
-  menuselect.makeopts
-
+  sudo make menuselect
+  # sudo menuselect/menuselect --enable format_mp3  --enable app_macro \
+  # menuselect.makeopts
   sudo make
   sudo make install
   sudo make samples
 }
 
 function configure_logrotate() {
-  sudo make /usr/src/asterisk-17*/install-logrotate
+  cd $ASTERISK_SRC
+  sudo make install-logrotate
   sudo sed -i "s/create 640 root root/create 640 asterisk asterisk/g" /etc/logrotate.d/asterisk
   #statements
 }
