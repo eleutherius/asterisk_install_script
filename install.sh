@@ -3,6 +3,7 @@
 SCRIPT_PATH=`pwd`
 ASTERISK_SRC="/usr/src/asterisk-17*/"
 
+set -ex
 
 function pre_install() {
   sudo apt update && sudo apt upgrade -y
@@ -13,7 +14,7 @@ function pre_install() {
   # Download sourses
   cd /usr/src/
   sudo wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-17.3.0.tar.gz
-  wget --no-check-certificate https://github.com/pbxware/asterisk-sounds-additional/tarball/master -Oadditional-sounds.tar.gz asterisk-17.3.0.tar.gz
+  sudo tar -zxvf asterisk-17.3.0.tar.gz
   sudo rm -f asterisk-17*.gz
 }
 
