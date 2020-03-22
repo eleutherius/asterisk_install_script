@@ -1,3 +1,5 @@
+#!/bin/bash
+
 SCRIPT_PATH=`pwd`
 ASTERISK_SRC="/usr/src/asterisk-17*/"
 
