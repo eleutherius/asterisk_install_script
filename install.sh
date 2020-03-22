@@ -1,3 +1,6 @@
+SCRIPT_PATH=`pwd`
+ASTERISK_SRC="/usr/src/asterisk-17*/"
+
 
 function pre_install() {
   sudo apt update && sudo apt upgrade -y
@@ -13,7 +16,7 @@ function pre_install() {
 }
 
 function src_install() {
-  cd /usr/src/asterisk-17*/
+  cd $ASTERISK_SRC
 
   # Mp3 support
   sudo contrib/scripts/get_mp3_source.sh
@@ -22,12 +25,17 @@ function src_install() {
   sudo contrib/scripts/install_prereq install
 
   # Compile and install the asterisk:
-  #sudo ./configure && sudo make menuselect && sudo make && sudo make install
-  sudo ./configure && sudo make && sudo make install
+  sudo ./configure
+  # make menuselect
+  sudo menuselect/menuselect --enable format_mp3  --enable app_macro \
+  menuselect.makeopts
+
+  sudo make
+  sudo make install
   sudo make samples
 }
 
-function configure_logrotete() {
+function configure_logrotate() {
   sudo make /usr/src/asterisk-17*/install-logrotate
   sudo sed -i "s/create 640 root root/create 640 asterisk asterisk/g" /etc/logrotate.d/asterisk
   #statements
@@ -48,6 +56,7 @@ function configure_asterisk() {
   sed -i 's";\[radius\]"\[radius\]"g' /etc/asterisk/cdr.conf
   sed -i 's";radiuscfg => /usr/local/etc/radiusclient-ng/radiusclient.conf"radiuscfg => /etc/radcli/radiusclient.conf"g' /etc/asterisk/cdr.conf
   sed -i 's";radiuscfg => /usr/local/etc/radiusclient-ng/radiusclient.conf"radiuscfg => /etc/radcli/radiusclient.conf"g' /etc/asterisk/cel.conf
+  cp $SCRIPT_PATH/modules.conf  /etc/asterisk/modules.conf
 }
 
 function add_russian_music_files() {
@@ -67,9 +76,17 @@ function start_asterisk() {
   sudo systemctl enable asterisk
 }
 
+printf  "Start preinstall script\n"
+pre_install
 
-cd /usr/src/asterisk-16*/
-suod ./configure
-sudo make menuselect
-make install
-/etc/init.d/asterisk restart
+printf  "Start compile from SRC\n"
+src_install
+
+printf  "Configure logrotate...\n"
+configure_logrotate
+
+printf  "Configure asterisk ...\n"
+configure_asterisk
+
+printf  "Add russian music files...\n"
+add_russian_music_files

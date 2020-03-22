@@ -1,2 +1,2 @@
 # asterisk_install_script
-asterisk install script for ubuntu server  18.04
+auto install asterisk 17.3 script for Ubuntu server  18.04
